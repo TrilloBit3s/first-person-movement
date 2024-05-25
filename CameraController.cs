@@ -1,14 +1,18 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraController: MonoBehaviour 
+public class CameraController : MonoBehaviour 
 {
     [SerializeField]
-    private GameObject Player;
+    private Transform playerTransform;
     [SerializeField]
-    private float sensibilidadeX = 1f, sensibilidadeY = 1f;
+    private float sensibilidadeX = 1f;
+    [SerializeField]
+    private float sensibilidadeY = 1f;
     
+    private float rotationX = 0f;
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -16,28 +20,27 @@ public class CameraController: MonoBehaviour
 
     void Update()
     {
-        OlharEixoX();
-        OlharEixoY();
+        ControlarEixoX();
+        ControlarEixoY();
     }
 
-    private void OlharEixoX()
+    private void ControlarEixoX()
     {
         float mouseX = Input.GetAxis("Mouse X");
-
-        Vector3 rotation = Player.transform.localEulerAngles;
-        rotation.y += mouseX * sensibilidadeX;
-        Player.transform.localEulerAngles = rotation;   
+        Vector3 playerRotation = playerTransform.localEulerAngles;
+        playerRotation.y += mouseX * sensibilidadeX;
+        playerTransform.localEulerAngles = playerRotation;   
     }
 
-    private void OlharEixoY()
+    private void ControlarEixoY()
     {
         float mouseY = Input.GetAxis("Mouse Y");
+        rotationX -= mouseY * sensibilidadeY;
+        rotationX = Mathf.Clamp(rotationX, -70f, 60f);
 
-        Vector3 rotation = transform.localEulerAngles;
-        rotation.x += mouseY * sensibilidadeY;
-        rotation.x = (rotation.x > 180) ? rotation.x - 360 : rotation.x;
-        rotation.x = Mathf.Clamp(rotation.x, -70, 60);
-       // transform.Rotate(-mouseY,0f,0f); 
-       transform.localEulerAngles = rotation; //esta transição faz o player ver ao contrario      
+        Vector3 cameraRotation = transform.localEulerAngles;
+        cameraRotation.x = rotationX;
+        transform.localEulerAngles = cameraRotation;
+		// transform.Rotate(-mouseY,0f,0f); 
     }
 }
